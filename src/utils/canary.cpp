@@ -3,7 +3,23 @@
 #include <malloc.h>
 #include "systemlike.h"
 
-#include <stdio.h>
+void *canaryMalloc(size_t size)
+{
+  size += 2*sizeof(canary_t);
+
+  void *adr = malloc(size);
+
+  if (!adr)
+    return nullptr;
+
+  *(canary_t *)adr = LEFT_CANARY;
+
+  *(canary_t *)((char *)adr + size - sizeof(canary_t)) = RIGHT_CANARY;
+
+  adr = (char *)adr + sizeof(canary_t);
+
+  return adr;
+}
 
 void *canaryCalloc(size_t elementCount, size_t elementSize)
 {

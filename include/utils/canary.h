@@ -8,6 +8,8 @@
 
 typedef unsigned canary_t;
 
+void *canaryMalloc(size_t size);
+
 void *canaryCalloc(size_t elementCount, size_t elementSize);
 
 void *canaryRecalloc(void *address, size_t elementCount, size_t elementSize);

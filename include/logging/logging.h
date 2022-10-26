@@ -114,6 +114,4 @@ int loggingPrint(unsigned level, const void *value,const char *name,
 int loggingPrint(unsigned level, const char *value, const char *name,
                  const char *fileName, const char *functionName, int line);
 
-#undef LOG_INFO
-
 #endif
