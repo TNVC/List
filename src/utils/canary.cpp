@@ -44,20 +44,17 @@ void *canaryRecalloc(void *address, size_t elementCount, size_t elementSize)
   if (!address)
     return canaryCalloc(elementCount, elementSize);
 
-  if (!checkAddress(address))
-    return nullptr;
-
   size_t newSize = (elementCount && elementSize) ?
     elementCount*elementSize + 2*sizeof(canary_t) : 0;
 
-  void *newAdr = recalloc(address, 1, newSize);
+  void *newAdr = recalloc((char *)address - sizeof(canary_t), 1, newSize);
 
   if (!newAdr)
     return nullptr;
 
   *(canary_t *)((char *)newAdr + newSize - sizeof(canary_t)) = RIGHT_CANARY;
 
-  return newAdr;
+  return (char *)newAdr + sizeof(canary_t);
 }
 
 void canaryFree(void *address)
@@ -81,20 +78,4 @@ int checkRightCanary(void *address)
     return 0;
 
   return *(canary_t *)address == RIGHT_CANARY;
-}
-
-int checkAddress(void *address)
-{
-  if (!address)
-    return 0;
-
-  address = (char *)address - sizeof(canary_t);
-
-  size_t size = malloc_usable_size(address);
-
-  if (size <= 2*sizeof(canary_t))
-    return 0;
-
-  return *(canary_t *)         address                            == LEFT_CANARY  &&
-         *(canary_t *)((char *)address + size - sizeof(canary_t)) == RIGHT_CANARY;
 }

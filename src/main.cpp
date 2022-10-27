@@ -7,28 +7,30 @@
 
 int main()
 {
+  int error = 0;
+
   List list = {};
 
-  initList(&list, 15);
+  initList(&list, 20);
 
-   FILE *file = getLogFile();
+  FILE *file = getLogFile();
 
   dumpList(&list, validateList(&list), file);
 
-  for (int i = 0; i < 10; ++i)
+  for (int i = 0; i < 15; ++i)
     {
-      index_t index = list_pushBackElement(&list, &i);
+      index_t index = list_pushFrontElement(&list, &i, &error);
 
-      printf("%d: %d\n", i, index);
+      printf("1: %d: %d, %d\n", i, index, error);
 
       dumpList(&list, validateList(&list), file);
     }
 
-  for (int i = 0; i < 5; ++i)
+  for (int i = 10; i < 15; ++i)
     {
-      index_t index = list_insertElement(&list, rand() % 10 + 1, &i);
+      index_t index = list_insertElement(&list, rand() % 10 + 1, &i, &error);
 
-      printf("%d: %d\n", i, index);
+      printf("2: %d: %d, %d\n", i, index, error);
 
       dumpList(&list, validateList(&list), file);
     }
@@ -37,24 +39,28 @@ int main()
     {
       element_t el = 0;
 
-      list_removeElement(&list, rand()%15 + 1, &el);
+      list_removeElement(&list, rand()%10 + 1, &el, &error);
 
-      printf("%d: %d\n", i, el);
+      printf("3: %d: %d, %d\n", i, el, error);
 
       dumpList(&list, validateList(&list), file);
     }
+
+  //  list_resize(&list, 16);
+
+  dumpList(&list, validateList(&list), file);
 
   list_restoreLinearity(&list);
 
   dumpList(&list, validateList(&list), file);
 
-  for (int i = 0; i < 10; ++i)
+  for (int i = 0; i < 15; ++i)
     {
       element_t el = 0;
 
-      list_popBackElement(&list, &el);
+      list_popBackElement(&list, &el, &error);
 
-      printf("%d: %d\n", i, el);
+      printf("4: %d: %d, %d\n", i, el, error);
 
       dumpList(&list, validateList(&list), file);
     }
