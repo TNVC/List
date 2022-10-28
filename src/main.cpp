@@ -46,7 +46,7 @@ int main()
       dumpList(&list, validateList(&list), file);
     }
 
-  //  list_resize(&list, 16);
+  list_resize(&list, 1, 16);
 
   dumpList(&list, validateList(&list), file);
 
