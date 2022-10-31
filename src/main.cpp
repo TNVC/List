@@ -2,7 +2,6 @@
 #include <stdio.h>
 
 #include "logging.h"
-
 #include <stdlib.h>
 
 int main()
@@ -11,48 +10,62 @@ int main()
 
   List list = {};
 
-  initList(&list, 20);
+  initList(&list, 10);
 
   FILE *file = getLogFile();
 
-  dumpList(&list, validateList(&list), file);
+  dumpListWithMessage(&list, validateList(&list), file, "Start");
 
-  for (int i = 0; i < 15; ++i)
+  for (int i = 6; i < 12; ++i)
+    {
+      index_t index = list_pushBackElement(&list, &i, &error);
+
+      printf("1.1: %d: %d, %d\n", i, index, error);
+
+      dumpListWithMessage(&list, validateList(&list), file, "Push back");
+    }
+
+  for (int i = 0; i < 6; ++i)
     {
       index_t index = list_pushFrontElement(&list, &i, &error);
 
       printf("1: %d: %d, %d\n", i, index, error);
 
-      dumpList(&list, validateList(&list), file);
+      dumpListWithMessage(&list, validateList(&list), file, "Push front");
     }
+
 
   for (int i = 10; i < 15; ++i)
     {
-      index_t index = list_insertElement(&list, rand() % 10 + 1, &i, &error);
+      index_t in = rand() % 10 + 1;
+
+      index_t index = list_insertElement(&list, in, &i, &error);
 
       printf("2: %d: %d, %d\n", i, index, error);
 
-      dumpList(&list, validateList(&list), file);
+      dumpListWithMessage(&list, validateList(&list), file, "Insert index: %d", in);
     }
 
   for (int i = 0; i < 5; ++i)
     {
       element_t el = 0;
 
-      list_removeElement(&list, rand()%10 + 1, &el, &error);
+      index_t index = rand()%10 + 1;
+
+      list_removeElement(&list, index, &el, &error);
 
       printf("3: %d: %d, %d\n", i, el, error);
 
-      dumpList(&list, validateList(&list), file);
+      dumpListWithMessage(&list, validateList(&list), file, "Remove index: %d", index);
     }
 
-  list_resize(&list, 1, 16);
+  //list_resize(&list, 16, 1);
 
-  dumpList(&list, validateList(&list), file);
+  //dumpListWithMessage(&list, validateList(&list), file, "Resize");
 
   list_restoreLinearity(&list);
 
-  dumpList(&list, validateList(&list), file);
+  dumpListWithMessage(&list, validateList(&list), file, "Line alive");
 
   for (int i = 0; i < 15; ++i)
     {
@@ -62,10 +75,10 @@ int main()
 
       printf("4: %d: %d, %d\n", i, el, error);
 
-      dumpList(&list, validateList(&list), file);
+      dumpListWithMessage(&list, validateList(&list), file, "Pop back");
     }
 
-  dumpList(&list, validateList(&list), file);
+  dumpListWithMessage(&list, validateList(&list), file, "End");
 
   destroyList(&list);
 
